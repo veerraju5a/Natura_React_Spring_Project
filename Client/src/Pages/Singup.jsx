@@ -70,7 +70,7 @@ export const Singup = () => {
   return (
     <>
 
-      <Header />
+      {/* <Header /> */}
       <div className="d-flex flex-column justify-content-center" id="login-box">
         <div className="login-box-header">
           <h4

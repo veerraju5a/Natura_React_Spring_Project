@@ -128,6 +128,16 @@ const ProductManager = () => {
               <p>{product.description}</p>
               <p>Weight: {product.weight} kg</p>
               <p>Price: ${product.price}</p>
+              <img
+               src={`../images/${product.img}`}
+              //src={`data:image/png;base64,${props.img}`}
+              // src={base64Image}
+
+              width={189}
+              height={189}
+              loading="lazy"
+              alt="Fresh Orangey"
+            />
               <p>Image: {product.img}</p>
             </div>
             <div className="product-actions">
