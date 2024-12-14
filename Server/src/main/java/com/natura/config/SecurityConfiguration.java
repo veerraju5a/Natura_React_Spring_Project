@@ -29,7 +29,7 @@ public class SecurityConfiguration {
 
                  .requestMatchers("/**")
                  .permitAll()
-//                .requestMatchers("/product/**").hasRole(ADMIN.name())
+                //.requestMatchers("/addproduct/**").hasRole(ADMIN.name())
 //                 .requestMatchers("/cart/**").hasRole(ADMIN.name())
                 .anyRequest()
                 .authenticated()

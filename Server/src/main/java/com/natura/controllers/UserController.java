@@ -21,9 +21,13 @@ public class UserController {
 
     @PostMapping("/singup")
     public ResponseEntity<UserDto> CreateUser(@RequestBody UserDto userDto){
-    	System.out.println("inside signup" + userDto.getName());
-        UserDto userDto1 = this.userService.CreateUser(userDto);
-
+    	System.out.println("inside signup" + userDto.getRole());
+    	UserDto userDto1=new UserDto();
+    	if(userDto.getRole().equals("admin")) {
+    		 userDto1 = this.userService.CreateAdmin(userDto);
+    	}else {
+    		userDto1 = this.userService.CreateUser(userDto);
+    	}
         return new ResponseEntity<>(userDto1, HttpStatusCode.valueOf(200));
     }
 

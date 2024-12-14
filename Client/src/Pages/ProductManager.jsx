@@ -50,19 +50,97 @@ const ProductManager = () => {
   };
 
   const handleEdit = async (productId) => {
+    const editWindow = window.open('', 'Edit Product', 'width=600,height=400');
     try {
       const product = await getProductById(productId);
-      setFormData(product);
       setEditingProductId(productId);
+      
+      editWindow.document.write(`
+        <html>
+          <head>
+            <title>Edit Product</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              form { display: flex; flex-direction: column; }
+              input, textarea, button { margin: 10px 0; padding: 8px; }
+            </style>
+          </head>
+          <body>
+            <h1>Edit Product</h1>
+            <form id="edit-form">
+              <input name="productname" placeholder="Product Name" value="${product.productName}" required />
+              <textarea name="description" placeholder="Description" required>${product.description}</textarea>
+              <input name="weight" placeholder="Weight" type="number" value="${product.weight}" required />
+              <input name="price" placeholder="Price" type="number" value="${product.price}" required />
+              <input name="img" placeholder="Image URL" value="${product.img}" required />
+              <button type="submit">Update</button>
+            </form>
+            <script>
+              document.getElementById('edit-form').onsubmit = function(event) {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const data = Object.fromEntries(formData.entries());
+                window.opener.handleUpdateProduct(${productId}, data);
+                window.close();
+              };
+            </script>
+          </body>
+        </html>
+      `);
     } catch (error) {
       console.error('Error fetching product for edit:', error);
     }
   };
 
-  const handleDelete = async (productId) => {
+  window.handleUpdateProduct = async (productId, data) => {
+    try {
+      await updateProduct(productId, data);
+      fetchProducts();
+      alert('Product updated successfully.');
+    } catch (error) {
+      console.error('Error updating product:', error);
+    }
+  };
+
+  const handleDeleteConfirmation = (productId) => {
+    const deleteWindow = window.open(
+      '',
+      'Delete Confirmation',
+      'width=400,height=200'
+    );
+
+    deleteWindow.document.write(`
+      <html>
+        <head>
+          <title>Confirm Delete</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+            button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+          </style>
+        </head>
+        <body>
+          <h3>Are you sure you want to delete this product?</h3>
+          <button id="yes-button">Yes</button>
+          <button id="no-button">No</button>
+          <script>
+            document.getElementById('yes-button').onclick = function() {
+              window.opener.handleDeleteAction(${productId});
+              window.close();
+            };
+            document.getElementById('no-button').onclick = function() {
+              window.close();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+  };
+
+  window.handleDeleteAction = async (productId) => {
     try {
       await deleteProduct(productId);
       fetchProducts();
+      alert('Product deleted successfully.');
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -75,7 +153,7 @@ const ProductManager = () => {
         <input
           name="productname"
           placeholder="Product Name"
-          value={formData.productname}
+          value={formData.productName}
           onChange={handleInputChange}
           className="form-input"
           required
@@ -123,26 +201,22 @@ const ProductManager = () => {
         {products.map((product) => (
           <li key={product.productid} className="product-item">
             <div className="product-details">
-            <h2>{product.productid}</h2>
-              <h2>{product.productname}</h2>
+              <h2>{product.productid}</h2>
+              <h2>{product.productName}</h2>
               <p>{product.description}</p>
               <p>Weight: {product.weight} kg</p>
               <p>Price: ${product.price}</p>
               <img
-               src={`../images/${product.img}`}
-              //src={`data:image/png;base64,${props.img}`}
-              // src={base64Image}
-
-              width={189}
-              height={189}
-              loading="lazy"
-              alt="Fresh Orangey"
-            />
-              <p>Image: {product.img}</p>
+                src={`../images/${product.img}`}
+                width={189}
+                height={189}
+                loading="lazy"
+                alt={product.productname}
+              />
             </div>
             <div className="product-actions">
               <button onClick={() => handleEdit(product.productid)} className="edit-button">Edit</button>
-              <button onClick={() => handleDelete(product.productid)} className="delete-button">Delete</button>
+              <button onClick={() => handleDeleteConfirmation(product.productid)} className="delete-button">Delete</button>
             </div>
           </li>
         ))}

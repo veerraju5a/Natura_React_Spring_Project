@@ -19,6 +19,7 @@ import com.natura.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -43,21 +44,45 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto CreateUser(UserDto userDto) {
+    public UserDto CreateUser(UserDto userDto){       
         User user= this.modelMapper.map(userDto, User.class);
         System.out.println("user details:" + user.getName());
-        List<Role> list= new ArrayList<>();
-                list.add(new Role(TotalRoles.ADMIN.name()));
-        user.setRole(list);
+        Role userRole=new Role();
+        userRole.setRole("ROLE_USER");
+        user.setName("user");
+        List<Role> list1= new ArrayList<>();
+                list1.add(new Role(TotalRoles.USER.name()));
+        user.setRole(Set.of(userRole));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Cart cart= new Cart();
-        cart.setUser(user);
-        user.setCart(cart);
+        Cart cart1= new Cart();
+        cart1.setUser(user);
+        user.setCart(cart1);
 
+        
         this.userRepo.save(user);
+        this.modelMapper.map(user,UserDto.class);
         return this.modelMapper.map(user,UserDto.class);
     }
-
+    @Override
+    public UserDto CreateAdmin(UserDto userDto) {
+    	User admin= this.modelMapper.map(userDto, User.class);
+        System.out.println("user details:" + admin.getName());
+        Role adminRole=new Role();
+        adminRole.setRole("ROLE_ADMIN");
+        admin.setName("admin");
+        List<Role> list= new ArrayList<>();
+                list.add(new Role(TotalRoles.ADMIN.name()));
+        admin.setRole(Set.of(adminRole));
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        Cart cart= new Cart();
+        cart.setUser(admin);
+        admin.setCart(cart);
+        this.userRepo.save(admin);
+        this.modelMapper.map(admin,UserDto.class);
+        return this.modelMapper.map(admin,UserDto.class);
+        
+    }
+ 
     @Override
     public SingIn SingIn(SingIn singIn) {
     	System.out.println("Email:"+singIn.getEmail()+""+singIn.getPassword());
@@ -67,6 +92,7 @@ public class UserServiceImpl implements UserService {
         System.out.println("Email:"+user.getEmail());
         var jwtToken=jwtService.generateToken(user);
         singIn.setJwt(jwtToken);
+        singIn.setRole(user.getName());
         return singIn;
     }
 }

@@ -7,6 +7,6 @@ public interface UserService {
 
 
     UserDto CreateUser(UserDto userDto);
-
+    UserDto CreateAdmin(UserDto userDto);
     SingIn SingIn(SingIn singIn);
 }

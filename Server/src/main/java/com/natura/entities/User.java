@@ -1,6 +1,8 @@
 package com.natura.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.natura.entities.Role;
+
 import jakarta.persistence.*;
 
 
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -67,11 +70,11 @@ public class User implements UserDetails {
 		this.date = date;
 	}
 
-	public List<Role> getRole() {
+	public Set<Role> getRole() {
 		return role;
 	}
 
-	public void setRole(List<Role> role) {
+	public void setRole(Set<Role> role) {
 		this.role = role;
 	}
 
@@ -92,8 +95,15 @@ public class User implements UserDetails {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Role> role;
+//    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    private List<Role> role;
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	@JoinTable(
+			name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private Set<Role> role;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Cart cart;

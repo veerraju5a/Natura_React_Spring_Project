@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 export const Singup = () => {
   const [user, setUser] = useState({
     name: "",
+    role: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -145,6 +146,7 @@ export const Singup = () => {
             value={user.name}
             minLength={6}
           />
+          
           <input
             type="email"
             className="email-imput form-control"
@@ -176,6 +178,17 @@ export const Singup = () => {
             onChange={(e) =>setUser({ ...user, confirmPassword: e.target.value })}
             value={user.confirmPassword}
             name="confirmPassword"
+            minLength={6}
+          />
+          <input
+            type="text"
+            className="email-imput form-control"
+            style={{ marginTop: 10 }}
+            required=""
+            placeholder="Role user or admin"
+            name="role"
+            onChange={(e) => setUser({ ...user, role: e.target.value })}
+            value={user.role}
             minLength={6}
           />
         </div>

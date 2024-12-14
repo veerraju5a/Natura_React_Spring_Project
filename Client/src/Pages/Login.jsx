@@ -53,10 +53,15 @@ export const Login = () => {
     
     const data = await res.json();
     sessionStorage.setItem("token", data.jwt);
-    if(res.status===200){
+    console.log("user="+data.role)
+    if(res.status===200 && data.role=="user"){
       onToast('Login Successfull!!');
       window.location.href = "/home";
-    }else{
+    }else if(res.status===200 && data.role=="admin"){
+      onToast('Login Successfull!!');
+      window.location.href = "/addproduct";
+    }
+      else{
       onToast("Invalid Credentials");
     }
 
